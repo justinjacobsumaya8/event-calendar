@@ -6,7 +6,7 @@
                     <th colspan="2"><h3>{{ header_date }}</h3></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody v-if="dates.length > 0">
                 <tr v-for="(date, index) in dates" :key="index" :class="{ 'tr-success' : date.events.length > 0 }">
                     <td class="w-30">{{ format_date(date.date) }}</td>
                     <td >
@@ -16,6 +16,11 @@
                     </td>
                 </tr>
             </tbody>
+            <tfoot v-else>
+                <tr>
+                    <td>No data available.</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </template>
@@ -39,6 +44,15 @@ export default {
             .then(response => {
                 this.dates = response.data;
                 this.header_date = moment(String(response.data[0]['date'])).format('MMM YYYY');
+                
+                var newArray = response.data.filter(item => {
+                    return item.events.length > 0 
+                });
+                
+                if (newArray.length > 0) 
+                {
+                    bus.$emit('events', newArray);   
+                }
             })
             .catch(error => {
                 console.log(error);

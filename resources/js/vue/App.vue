@@ -1,6 +1,8 @@
 <template>
-    <div class="container mt-5">
-        <Calendar/>
+    <div>
+        <div class="container my-5">
+            <Calendar/>
+        </div>
     </div>
 </template>
 

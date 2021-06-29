@@ -25,6 +25,8 @@ class CreateCalendarDateEventsTable extends Migration
             $table->boolean('friday')->default(0);
             $table->boolean('saturday')->default(0);
             $table->boolean('sunday')->default(0);
+            $table->date('date_from')->nullable();
+            $table->date('date_to')->nullable();
             $table->timestamps();
         });
     }

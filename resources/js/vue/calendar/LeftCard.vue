@@ -9,11 +9,12 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label for="input-date-from">From</label>
-                        <input type="date" class="form-control" v-model="date_from" id="input-date-from">
+                        <b-form-datepicker v-model="date_from" :min="minDate" :max="maxDate" class="mb-2"></b-form-datepicker>
                     </div>
                     <div class="col-md-6">
                         <label for="input-date-to">To</label>
-                        <input type="date" class="form-control" v-model="date_to" id="input-date-to">
+                        <!-- <input type="date" class="form-control" v-model="date_to" id="input-date-to"> -->
+                        <b-form-datepicker v-model="date_to" :min="minDate" :max="maxDate" class="mb-2"></b-form-datepicker>
                     </div>
                 </div>
             </div>
@@ -71,13 +72,54 @@ export default {
             thursday: '',
             friday: '',
             saturday: '',
-            sunday: ''
+            sunday: '',
+            minDate: '',
+            maxDate: ''
         }
     },
     methods: {
         submitForm() {
             if(this.name == '') {
-                alert('what');
+                this.$toast.open({
+                    message: 'Please fill up Event Name',
+                    type: 'warning',
+                    position: 'top-right'
+                }); 
+                return;
+            }
+
+            if(this.date_from == '') {
+                this.$toast.open({
+                    message: 'Please fill up Date From',
+                    type: 'warning',
+                    position: 'top-right'
+                }); 
+                return;
+            }
+
+            if(this.date_to == '') {
+                this.$toast.open({
+                    message: 'Please fill up Date To',
+                    type: 'warning',
+                    position: 'top-right'
+                }); 
+                return;
+            }
+
+            if((this.monday == '' || this.monday == false) 
+                && (this.tuesday == '' || this.tuesday == false)
+                && (this.wednesday == '' || this.wednesday == false)
+                && (this.thursday == '' || this.thursday == false)
+                && (this.friday == '' || this.friday == false)
+                && (this.saturday == '' || this.saturday == false)
+                && (this.sunday == '' || this.sunday == false)
+            ) 
+            {
+                this.$toast.open({
+                    message: 'Please select a day',
+                    type: 'warning',
+                    position: 'top-right'
+                }); 
                 return;
             }
 
@@ -98,7 +140,7 @@ export default {
                 {
                     this.$toast.open({
                         message: response.data.message,
-                        type: 'success',
+                        type: response.data.type,
                         position: 'top-right'
                     }); 
                     
@@ -106,10 +148,105 @@ export default {
                 }
             })
             .catch(error => {
-                console.log(error);
+                console.log()
+                this.$toast.open({
+                    message: error.response.data.message,
+                    type: error.response.data.type,
+                    position: 'top-right'
+                });
             })
-        }   
-    }
+        },
+        getData() {
+            bus.$on('events', (data) => {
+
+                this.name = data[0]['events'][0]['name'];
+                this.date_from = data[0]['events'][0]['date_from'];
+                this.date_to = data[0]['events'][0]['date_to'];
+                
+                var monday = data.filter(item => {
+                    return item.monday == 1 
+                });
+
+                var tuesday = data.filter(item => {
+                    return item.tuesday == 1 
+                });
+
+                var wednesday = data.filter(item => {
+                    return item.wednesday == 1 
+                });
+
+                var thursday = data.filter(item => {
+                    return item.thursday == 1 
+                });
+
+                var friday = data.filter(item => {
+                    return item.friday == 1 
+                });
+
+                var saturday = data.filter(item => {
+                    return item.saturday == 1 
+                });
+
+                var sunday = data.filter(item => {
+                    return item.sunday == 1 
+                });
+
+                if (monday.length > 0) 
+                {
+                    this.monday = 1;
+                }
+
+                if (tuesday.length > 0) 
+                {
+                    this.tuesday = 1;
+                }
+
+                if (wednesday.length > 0) 
+                {
+                    this.wednesday = 1;
+                }
+
+                if (thursday.length > 0) 
+                {
+                    this.thursday = 1;
+                }
+
+                if (friday.length > 0) 
+                {
+                    this.friday = 1;
+                }
+
+                if (saturday.length > 0) 
+                {
+                    this.saturday = 1;
+                }
+
+                if (sunday.length > 0) 
+                {
+                    this.sunday = 1;
+                }
+            });
+        },
+        setupDate() {
+            const now = new Date()
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+            const minDate = new Date(today)
+            minDate.setMonth(minDate.getMonth())
+            minDate.setDate(1)
+
+            const maxDate = new Date(today)
+            maxDate.setMonth(maxDate.getMonth())
+            maxDate.setDate(30)
+
+            this.minDate = minDate;
+            this.maxDate = maxDate;
+        }
+    },
+    created() {
+        this.getData();
+        this.setupDate();
+    },
 }
 </script>
 

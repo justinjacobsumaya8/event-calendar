@@ -68,26 +68,39 @@ class EventCalendarController extends Controller
             // Truncate all data in database to save only 1 event
             CalendarDateEvent::truncate();
 
+            $data_array = array();
             foreach($calendar_dates as $calendar_date) 
             {
-                // Saving event
-                $event = new CalendarDateEvent;
-                $event->name = $request->name;
-                $event->calendar_date_id = $calendar_date->id;
-                $event->monday = $calendar_date->monday;
-                $event->tuesday = $calendar_date->tuesday;
-                $event->wednesday = $calendar_date->wednesday;
-                $event->thursday = $calendar_date->thursday;
-                $event->friday = $calendar_date->friday;
-                $event->saturday = $calendar_date->saturday;
-                $event->sunday = $calendar_date->sunday;
-                $event->save();
+                array_push($data_array, 
+                    array(
+                        'name' => $request->name,
+                        'calendar_date_id' => $calendar_date->id,
+                        'monday' => $calendar_date->monday,
+                        'tuesday' => $calendar_date->tuesday,
+                        'wednesday' => $calendar_date->wednesday,
+                        'thursday' => $calendar_date->thursday,
+                        'friday' => $calendar_date->friday,
+                        'saturday'=> $calendar_date->saturday,
+                        'sunday' => $calendar_date->sunday,
+                        'date_from' => $request->date_from,
+                        'date_to' => $request->date_to
+                    )
+                );
             }
+
+            // Save data all at once
+            CalendarDateEvent::insert($data_array);
+
+            return response()->json([
+                'data' => $calendar_dates,
+                'message' => 'Event successfully saved.',
+                'type' => 'success'
+            ], 200);
         }
 
         return response()->json([
-            'data' => $calendar_dates,
-            'message' => 'Event successfully saved.'
-        ]);
+            'message' => 'No data available',
+            'type' => 'warning'
+        ], 422);
     }
 }
