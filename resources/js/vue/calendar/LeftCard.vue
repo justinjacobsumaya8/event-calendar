@@ -256,6 +256,6 @@ export default {
     }
 
     .margin span {
-        margin-left: 2px;
+        margin-left: 4px;
     }
 </style>
