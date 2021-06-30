@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\EventCalendarRequest;
 use App\Models\{CalendarDate, CalendarDateEvent};
 
 class EventCalendarController extends Controller
@@ -13,14 +14,8 @@ class EventCalendarController extends Controller
         return response()->json($dates);
     }
 
-    public function store(Request $request)
+    public function store(EventCalendarRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'date_from' => 'required',
-            'date_to' => 'required'
-        ]);
-
         $calendar_dates = CalendarDate::whereDate('date', '>=', $request->date_from)
                         ->whereDate('date', '<=', $request->date_to)
                         ->where(function ($query) use ($request){

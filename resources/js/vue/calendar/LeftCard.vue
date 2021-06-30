@@ -151,7 +151,7 @@ export default {
                 console.log()
                 this.$toast.open({
                     message: error.response.data.message,
-                    type: error.response.data.type,
+                    type: 'warning',
                     position: 'top-right'
                 });
             })
