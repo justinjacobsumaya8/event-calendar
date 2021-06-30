@@ -33,6 +33,11 @@ export default {
 </script>
 
 <style scoped>
+    .card {
+        box-shadow: 0 0 30px rgba(0,0,0,0.1) !important;
+        border: 0 !important;
+    }
+
     .card-header {
         background-color: #fff !important;
     }
